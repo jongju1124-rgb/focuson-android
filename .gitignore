@@ -1,0 +1,40 @@
+# Android Gradle
+.gradle/
+build/
+app/build/
+*/build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+local.properties
+
+# 🔒 서명 관련 — 절대 커밋 금지
+keystore.properties
+signing/
+*.jks
+*.keystore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs / Temp
+*.log
+*.tmp
+output/
+
+# Kotlin
+.kotlin/
+
+# Claude Code 로컬 설정
+.claude/
+
+# 루트의 오래된 APK / 문서
+/app-debug.apk
+*.rtf
+

@@ -1,0 +1,73 @@
+name: Release APK
+
+on:
+  push:
+    tags:
+      - 'v*'   # v0.1.0, v0.2.0, ... 태그를 푸시하면 트리거
+  workflow_dispatch:   # 수동 실행도 가능
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Decode release keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          mkdir -p signing
+          echo "$KEYSTORE_BASE64" | base64 --decode > signing/focuson-release.jks
+
+      - name: Create keystore.properties
+        env:
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          cat > keystore.properties <<EOF
+          storeFile=signing/focuson-release.jks
+          storePassword=$STORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Rename APK
+        run: |
+          mv app/build/outputs/apk/release/app-release.apk \
+             app/build/outputs/apk/release/focuson-${{ github.ref_name }}.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: app/build/outputs/apk/release/focuson-*.apk
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## 포커스온 ${{ github.ref_name }}
+
+            ### 설치 방법
+            1. 아래 `focuson-${{ github.ref_name }}.apk` 다운로드
+            2. Android 폰에서 APK 탭 → 설치
+            3. 앱 실행 후 권한 온보딩 따라가기
+
+            자세한 권한 가이드는 [README](https://github.com/${{ github.repository }}/blob/main/README.md#설치) 참고.
+
+            ### 개인정보
+            네트워크 통신 없음, 모든 데이터는 폰에만 저장. 자세히: [PRIVACY](https://github.com/${{ github.repository }}/blob/main/PRIVACY.md)

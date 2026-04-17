@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_primary">#FF5A3FFF</color>
+    <color name="brand_on_primary">#FFFFFFFF</color>
+    <color name="brand_student">#FF3D5AF1</color>
+    <color name="brand_worker">#FF0EA371</color>
+    <color name="brand_meditation">#FFB341FF</color>
+    <color name="overlay_scrim">#E6101828</color>
+</resources>
