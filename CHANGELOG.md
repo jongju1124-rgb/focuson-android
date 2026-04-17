@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-04-17
+
+### Added
+- **앱 선택 화면 카테고리화** — 설치된 앱을 SNS / OTT / 음악 / 웹툰 / 커뮤니티 / 쇼핑 / 게임 / 메신저 / 브라우저 / 뉴스 / 기타로 자동 분류
+- **차단 중 앱 상단 고정** — 현재 체크된 앱을 "✅ 차단 중" 섹션으로 묶어 맨 위에 표시
+- **sticky 헤더** — 스크롤 중에도 현재 보고 있는 카테고리가 고정됨
+- 주요 한국/글로벌 앱 100+ 개 카테고리 매핑 (넷플릭스, 쿠팡, 배민, 리니지, 원신 등)
+
+### Changed
+- AppCategorizer 기반으로 prefix 휴리스틱 추가 (com.ncsoft.*, com.netmarble.* 등 게임 퍼블리셔)
+
 ## [0.1.0] - 2026-04-17
 
 ### 🎉 최초 공개 릴리즈
@@ -30,5 +41,6 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.1.0

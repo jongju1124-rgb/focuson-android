@@ -1,7 +1,9 @@
 package com.focuson.app.ui.custom
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AssistChip
@@ -53,12 +56,20 @@ import com.focuson.app.FocusOnApp
 import com.focuson.app.R
 import com.focuson.app.data.repo.BlockRuleRepository
 import com.focuson.app.data.repo.InstalledApp
+import com.focuson.app.domain.AppCategorizer
+import com.focuson.app.domain.model.AppCategory
 import com.focuson.app.domain.model.PresetMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private sealed interface PickerRow {
+    data class Header(val title: String, val count: Int, val isSelected: Boolean) : PickerRow
+    data class Item(val app: InstalledApp, val isChecked: Boolean) : PickerRow
+}
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AppPickerScreen(
     mode: PresetMode,
@@ -94,13 +105,39 @@ fun AppPickerScreen(
 
     val apps by appsFlow.collectAsState()
     var query by remember { mutableStateOf("") }
+
+    // 필터링
     val filtered = remember(apps, query) {
         if (query.isBlank()) apps
-        else apps.filter { it.label.contains(query, ignoreCase = true) || it.packageName.contains(query, ignoreCase = true) }
+        else apps.filter {
+            it.label.contains(query, ignoreCase = true) ||
+                it.packageName.contains(query, ignoreCase = true)
+        }
+    }
+
+    // 섹션화: [선택됨 헤더 + 아이템들] + [카테고리별 (order 순) 헤더 + 아이템들]
+    val rows: List<PickerRow> = remember(filtered, selected.value) {
+        buildList {
+            val checkedApps = filtered.filter { selected.value.contains(it.packageName) }
+                .sortedBy { it.label.lowercase() }
+            val uncheckedApps = filtered.filter { !selected.value.contains(it.packageName) }
+
+            if (checkedApps.isNotEmpty()) {
+                add(PickerRow.Header("차단 중", checkedApps.size, isSelected = true))
+                checkedApps.forEach { add(PickerRow.Item(it, isChecked = true)) }
+            }
+
+            val byCategory = uncheckedApps.groupBy { AppCategorizer.categorize(it.packageName) }
+            AppCategory.entries.sortedBy { it.order }.forEach { cat ->
+                val list = byCategory[cat]?.sortedBy { it.label.lowercase() } ?: return@forEach
+                if (list.isEmpty()) return@forEach
+                add(PickerRow.Header("${cat.emoji} ${cat.displayName}", list.size, isSelected = false))
+                list.forEach { add(PickerRow.Item(it, isChecked = false)) }
+            }
+        }
     }
 
     val hasUnsavedChanges = loaded && selected.value != initialSelection
-
     BackHandler(enabled = hasUnsavedChanges) { showDiscardDialog = true }
 
     val whitelist = mode.whitelistMode
@@ -116,6 +153,8 @@ fun AppPickerScreen(
         }
         selected.value = next
     }
+
+    val listState = rememberLazyListState()
 
     Scaffold { inner: PaddingValues ->
         Column(modifier = Modifier.fillMaxSize().padding(inner).padding(16.dp)) {
@@ -188,7 +227,7 @@ fun AppPickerScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                } else if (filtered.isEmpty()) {
+                } else if (rows.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center,
@@ -200,59 +239,26 @@ fun AppPickerScreen(
                         )
                     }
                 } else {
-                    LazyColumn {
-                        items(filtered, key = { it.packageName }) { item ->
-                            val isSelected = selected.value.contains(item.packageName)
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { toggle(item.packageName) }
-                                    .padding(horizontal = 4.dp, vertical = 10.dp),
-                            ) {
-                                val icon = remember(item.packageName) { app.appRepository.iconFor(item.packageName) }
-                                Surface(
-                                    shape = RoundedCornerShape(10.dp),
-                                    color = MaterialTheme.colorScheme.surfaceVariant,
-                                    modifier = Modifier.size(40.dp),
-                                ) {
-                                    if (icon != null) {
-                                        Image(
-                                            bitmap = icon.toBitmap(96, 96).asImageBitmap(),
-                                            contentDescription = null,
-                                            modifier = Modifier.padding(4.dp),
-                                        )
-                                    } else {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center,
-                                        ) {
-                                            Text(
-                                                item.label.firstOrNull()?.toString() ?: "?",
-                                                style = MaterialTheme.typography.titleMedium,
-                                            )
-                                        }
-                                    }
-                                }
-                                Spacer(Modifier.width(12.dp))
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        item.label,
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        fontWeight = FontWeight.Medium,
-                                    )
-                                    Text(
-                                        item.packageName,
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    LazyColumn(state = listState) {
+                        for (row in rows) {
+                            when (row) {
+                                is PickerRow.Header -> stickyHeader(key = "h-${row.title}") {
+                                    SectionHeader(
+                                        title = row.title,
+                                        count = row.count,
+                                        highlight = row.isSelected,
+                                        accentColor = chipColor,
                                     )
                                 }
-                                Checkbox(
-                                    checked = isSelected,
-                                    onCheckedChange = { toggle(item.packageName) },
-                                )
+                                is PickerRow.Item -> item(key = "p-${row.app.packageName}") {
+                                    AppRow(
+                                        app = row.app,
+                                        isChecked = row.isChecked,
+                                        onToggle = { toggle(row.app.packageName) },
+                                    )
+                                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+                                }
                             }
-                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
                         }
                     }
                 }
@@ -310,6 +316,110 @@ fun AppPickerScreen(
             dismissButton = {
                 TextButton(onClick = { showDiscardDialog = false }) { Text("계속 편집") }
             },
+        )
+    }
+}
+
+@Composable
+private fun SectionHeader(
+    title: String,
+    count: Int,
+    highlight: Boolean,
+    accentColor: androidx.compose.ui.graphics.Color,
+) {
+    Surface(
+        color = if (highlight) accentColor.copy(alpha = 0.16f)
+        else MaterialTheme.colorScheme.surface,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    if (highlight) accentColor.copy(alpha = 0.12f)
+                    else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+                )
+                .padding(horizontal = 14.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (highlight) {
+                Text(
+                    "✅",
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                Spacer(Modifier.width(6.dp))
+            }
+            Text(
+                title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = if (highlight) accentColor
+                else MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                "$count",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AppRow(
+    app: InstalledApp,
+    isChecked: Boolean,
+    onToggle: () -> Unit,
+) {
+    val repo = remember { FocusOnApp.instance.appRepository }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onToggle() }
+            .padding(horizontal = 4.dp, vertical = 10.dp),
+    ) {
+        val icon = remember(app.packageName) { repo.iconFor(app.packageName) }
+        Surface(
+            shape = RoundedCornerShape(10.dp),
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier.size(40.dp),
+        ) {
+            if (icon != null) {
+                Image(
+                    bitmap = icon.toBitmap(96, 96).asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier.padding(4.dp),
+                )
+            } else {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        app.label.firstOrNull()?.toString() ?: "?",
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                app.label,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+            )
+            Text(
+                app.packageName,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = { onToggle() },
         )
     }
 }
