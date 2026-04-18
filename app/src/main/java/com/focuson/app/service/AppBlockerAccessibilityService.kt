@@ -31,7 +31,7 @@ class AppBlockerAccessibilityService : AccessibilityService() {
     }
 
     private fun handleWindowStateChanged(pkg: String, e: AccessibilityEvent) {
-        // 엄격모드 중 우회 시도(앱 삭제 / 접근성 끄기) 감지 → 뒤로가기
+        // 엄격모드 중 "포커스온 자체"에 대한 우회 시도만 차단 — 다른 앱 제거·강제중지는 통과
         if (BlockEngine.active()?.strict == true && isStrictBypassScreen(pkg, e)) {
             performGlobalAction(GLOBAL_ACTION_BACK)
             return
@@ -61,12 +61,51 @@ class AppBlockerAccessibilityService : AccessibilityService() {
         }
     }
 
+    /**
+     * 엄격모드에서 "포커스온 자체를 무력화하려는 화면"인지 판별.
+     *
+     * 판별 조건:
+     *   1) 현재 앱이 설정/패키지 설치 관리자 패키지
+     *   2) 제거/접근성 해제/강제 중지 관련 키워드 존재 (= 액션성 화면)
+     *   3) 화면 텍스트 어디엔가 "포커스온" 또는 "focuson" 이 언급됨 (= 대상이 우리 앱)
+     *
+     * (2)&(3) 둘 다 만족해야 차단. 다른 앱 제거·강제중지·다른 접근성 서비스 해제는 통과.
+     */
     private fun isStrictBypassScreen(pkg: String, e: AccessibilityEvent): Boolean {
         if (pkg !in SETTINGS_PACKAGES) return false
-        val text = (e.text.joinToString(" ") + " " + (e.className ?: "")).lowercase()
-        return UNINSTALL_KEYWORDS.any { it in text } ||
-            ACCESSIBILITY_KEYWORDS.any { it in text } ||
-            FORCE_STOP_KEYWORDS.any { it in text }
+        val eventText = (e.text.joinToString(" ") + " " + (e.className ?: "")).lowercase()
+
+        val hasActionKeyword = UNINSTALL_KEYWORDS.any { it in eventText } ||
+            ACCESSIBILITY_KEYWORDS.any { it in eventText } ||
+            FORCE_STOP_KEYWORDS.any { it in eventText }
+        if (!hasActionKeyword) return false
+
+        // 우리 앱이 대상인지 — event text 우선, 없으면 활성 창 최상위 영역까지 확인
+        if (FOCUSON_KEYWORDS.any { it in eventText }) return true
+        val rootText = collectTopLevelText(rootInActiveWindow).lowercase()
+        return FOCUSON_KEYWORDS.any { it in rootText }
+    }
+
+    private fun collectTopLevelText(node: AccessibilityNodeInfo?): String {
+        node ?: return ""
+        val sb = StringBuilder()
+        collectTextDepthLimited(node, sb, depth = 0, maxDepth = 3)
+        return sb.toString()
+    }
+
+    private fun collectTextDepthLimited(
+        node: AccessibilityNodeInfo,
+        sb: StringBuilder,
+        depth: Int,
+        maxDepth: Int,
+    ) {
+        if (depth > maxDepth) return
+        node.text?.toString()?.takeIf { it.isNotBlank() }?.let { sb.append(it).append(' ') }
+        node.contentDescription?.toString()?.takeIf { it.isNotBlank() }?.let { sb.append(it).append(' ') }
+        val count = node.childCount
+        for (i in 0 until count) {
+            node.getChild(i)?.let { collectTextDepthLimited(it, sb, depth + 1, maxDepth) }
+        }
     }
 
     private fun extractBrowserUrl(root: AccessibilityNodeInfo?, pkg: String): String? {
@@ -124,5 +163,8 @@ class AppBlockerAccessibilityService : AccessibilityService() {
         val UNINSTALL_KEYWORDS = listOf("uninstall", "제거", "삭제", "언인스톨")
         val ACCESSIBILITY_KEYWORDS = listOf("accessibility", "접근성", "접근성 서비스")
         val FORCE_STOP_KEYWORDS = listOf("force stop", "강제 중지", "강제 종료")
+
+        /** "포커스온 자체" 를 대상으로 하는지 판단할 때 쓰는 키워드 (전부 소문자) */
+        val FOCUSON_KEYWORDS = listOf("포커스온", "focuson", "com.focuson")
     }
 }

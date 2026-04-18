@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-04-18
+
+### Fixed
+- **엄격모드 — 다른 앱의 제거·강제중지가 모두 막히던 버그** — 원래 포커스온 무력화를 막으려던 로직이 "설정 화면 + 제거/중지 키워드"만 보고 모두 차단하고 있었음. 화면 텍스트에 "포커스온"/"focuson" 이 언급되어야만 `GLOBAL_ACTION_BACK` 트리거하도록 추가 조건 검증.
+  - ✅ Settings > Apps > Chrome 에서 [삭제] → 통과
+  - 🚫 Settings > Apps > 포커스온 에서 [삭제] → 차단
+  - ✅ 다른 접근성 서비스 끄기 → 통과
+  - 🚫 "포커스온 차단 서비스" 끄기 → 차단
+
 ## [0.3.1] - 2026-04-18
 
 ### Fixed
@@ -87,7 +96,8 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.3.2...HEAD
+[0.3.2]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.2
 [0.3.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.1
 [0.3.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.0
 [0.2.2]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.2
