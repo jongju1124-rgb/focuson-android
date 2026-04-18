@@ -10,6 +10,25 @@ class AppBlockerAccessibilityService : AccessibilityService() {
 
     private lateinit var overlayManager: BlockOverlayManager
 
+    /**
+     * "우리 앱"으로 간주할 키워드들. flavor(에디션)마다 applicationId/앱 이름이 다르므로
+     * 런타임에 PackageManager 에서 라벨·패키지명을 읽어와 구성한다.
+     * 여기에 포함된 문자열이 화면 텍스트에 보이면 "우리 앱이 대상"으로 판단.
+     */
+    private val focusonKeywords: List<String> by lazy {
+        buildList {
+            // 패키지명 (예: com.focuson.app / com.focuson.app.gyuwon)
+            add(packageName.lowercase())
+            // 사용자에게 보이는 라벨 (예: "포커스온" / "장규원이 중간고사 대비")
+            runCatching {
+                val label = applicationInfo.loadLabel(packageManager).toString()
+                if (label.isNotBlank()) add(label.lowercase())
+            }
+            // 범용 fallback — 혹시 label 이 못 읽어지거나 한글로 표기되지 않는 환경 대비
+            add("focuson")
+        }
+    }
+
     override fun onServiceConnected() {
         super.onServiceConnected()
         overlayManager = BlockOverlayManager(this) {
@@ -81,9 +100,9 @@ class AppBlockerAccessibilityService : AccessibilityService() {
         if (!hasActionKeyword) return false
 
         // 우리 앱이 대상인지 — event text 우선, 없으면 활성 창 최상위 영역까지 확인
-        if (FOCUSON_KEYWORDS.any { it in eventText }) return true
+        if (focusonKeywords.any { it in eventText }) return true
         val rootText = collectTopLevelText(rootInActiveWindow).lowercase()
-        return FOCUSON_KEYWORDS.any { it in rootText }
+        return focusonKeywords.any { it in rootText }
     }
 
     private fun collectTopLevelText(node: AccessibilityNodeInfo?): String {
@@ -163,8 +182,5 @@ class AppBlockerAccessibilityService : AccessibilityService() {
         val UNINSTALL_KEYWORDS = listOf("uninstall", "제거", "삭제", "언인스톨")
         val ACCESSIBILITY_KEYWORDS = listOf("accessibility", "접근성", "접근성 서비스")
         val FORCE_STOP_KEYWORDS = listOf("force stop", "강제 중지", "강제 종료")
-
-        /** "포커스온 자체" 를 대상으로 하는지 판단할 때 쓰는 키워드 (전부 소문자) */
-        val FOCUSON_KEYWORDS = listOf("포커스온", "focuson", "com.focuson")
     }
 }

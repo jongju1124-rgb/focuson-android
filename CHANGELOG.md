@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-04-18
+
+### Added
+- **에디션(productFlavors) 2종** — 같은 코드베이스에서 두 APK 동시 빌드
+  - `standard` — 기존 "포커스온" (applicationId `com.focuson.app`)
+  - `gyuwon` — 신규 "장규원이 중간고사 대비" (applicationId `com.focuson.app.gyuwon`)
+    - 프리셋 이름: `공부중` / `학원` / `학교`
+    - 위젯 칩 레이블도 자동 치환
+    - 접근성 서비스 라벨 `장규원이 중간고사 대비 차단 서비스`
+- **Strict bypass 판별 키워드를 런타임 계산** — 앱 라벨/패키지명을 PackageManager 에서 읽어 구성하여 에디션마다 자동 적용
+
+### Changed
+- `FOCUSON_KEYWORDS` 제거 → `focusonKeywords` (instance-level lazy) 로 이관
+- 위젯 레이아웃의 하드코딩 칩 레이블(`"수험생"/"직장인"/"명상"`) 을 `@string/widget_preset_*_short` 로 교체
+
 ## [0.3.2] - 2026-04-18
 
 ### Fixed
@@ -96,7 +111,8 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.3.3...HEAD
+[0.3.3]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.3
 [0.3.2]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.2
 [0.3.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.1
 [0.3.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.0

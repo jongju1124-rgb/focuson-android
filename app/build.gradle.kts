@@ -20,8 +20,8 @@ android {
         applicationId = "com.focuson.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 7
-        versionName = "0.3.2"
+        versionCode = 8
+        versionName = "0.3.3"
 
         vectorDrawables { useSupportLibrary = true }
         resourceConfigurations += listOf("ko", "en")
@@ -29,6 +29,20 @@ android {
         // 현대 기기용 arm64만 — 32-bit ARM/x86 제외로 APK 크기 30%+ 감소
         ndk {
             abiFilters += listOf("arm64-v8a")
+        }
+    }
+
+    // 기본(포커스온) / gyuwon(장규원이 중간고사 대비) 두 에디션
+    flavorDimensions += "edition"
+    productFlavors {
+        create("standard") {
+            dimension = "edition"
+            // 기본 applicationId 유지: com.focuson.app
+        }
+        create("gyuwon") {
+            dimension = "edition"
+            applicationIdSuffix = ".gyuwon"
+            versionNameSuffix = "-gyuwon"
         }
     }
 

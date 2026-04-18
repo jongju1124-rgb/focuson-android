@@ -84,4 +84,7 @@
 
     <!-- 위젯 -->
     <string name="widget_description">홈 화면에서 프리셋 바로 시작 · 진행 중 세션 남은 시간 표시</string>
+    <string name="widget_preset_student_short">수험생</string>
+    <string name="widget_preset_worker_short">직장인</string>
+    <string name="widget_preset_meditation_short">명상</string>
 </resources>
