@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +21,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,6 +31,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -45,6 +49,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.focuson.app.R
 import com.focuson.app.domain.model.PresetMode
@@ -108,7 +113,7 @@ fun HomeScreen(
             title = { Text("${stringResource(mode.displayNameRes)} 시작") },
             text = {
                 Column {
-                    Text("${minutes}분 동안 차단 세션을 시작합니다.")
+                    Text("${formatMinutes(minutes)} 동안 차단 세션을 시작합니다.")
                     if (strict) {
                         Spacer(Modifier.height(8.dp))
                         Text(
@@ -222,12 +227,18 @@ private fun PresetCard(
 private fun DurationRow(current: Int, accent: Color, onChange: (Int) -> Unit) {
     val options = listOf(15, 30, 60, 120, 240, 480)
     val haptics = LocalHapticFeedback.current
+    val isCustom = current !in options
+    var showCustomDialog by remember { mutableStateOf(false) }
+
     Column {
         Text(stringResource(R.string.session_duration_label), style = MaterialTheme.typography.labelLarge)
         Spacer(Modifier.height(8.dp))
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+        ) {
             options.forEach { opt ->
-                val selected = opt == current
+                val selected = opt == current && !isCustom
                 Surface(
                     shape = RoundedCornerShape(10.dp),
                     color = if (selected) accent else MaterialTheme.colorScheme.surface,
@@ -241,7 +252,7 @@ private fun DurationRow(current: Int, accent: Color, onChange: (Int) -> Unit) {
                     },
                 ) {
                     Text(
-                        "${opt}분",
+                        formatMinutes(opt),
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                         color = if (selected) Color.White else MaterialTheme.colorScheme.onSurface,
                         style = MaterialTheme.typography.labelMedium,
@@ -249,8 +260,98 @@ private fun DurationRow(current: Int, accent: Color, onChange: (Int) -> Unit) {
                     )
                 }
             }
+            // 직접 입력 칩
+            Surface(
+                shape = RoundedCornerShape(10.dp),
+                color = if (isCustom) accent else MaterialTheme.colorScheme.surface,
+                border = BorderStroke(
+                    1.dp,
+                    if (isCustom) accent else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
+                ),
+                modifier = Modifier.clickable {
+                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    showCustomDialog = true
+                },
+            ) {
+                Text(
+                    if (isCustom) "✏\uFE0F ${formatMinutes(current)}" else "✏\uFE0F 직접 입력",
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    color = if (isCustom) Color.White else MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = if (isCustom) FontWeight.SemiBold else FontWeight.Normal,
+                )
+            }
         }
     }
+
+    if (showCustomDialog) {
+        CustomMinutesDialog(
+            initial = if (isCustom) current else 45,
+            onConfirm = {
+                onChange(it)
+                showCustomDialog = false
+            },
+            onDismiss = { showCustomDialog = false },
+        )
+    }
+}
+
+private fun formatMinutes(m: Int): String = when {
+    m < 60 -> "${m}분"
+    m % 60 == 0 -> "${m / 60}시간"
+    else -> "${m / 60}시간 ${m % 60}분"
+}
+
+@Composable
+private fun CustomMinutesDialog(
+    initial: Int,
+    onConfirm: (Int) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var text by remember { mutableStateOf(initial.toString()) }
+    val parsed = text.toIntOrNull()
+    val valid = parsed != null && parsed in 1..720
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("세션 시간 직접 입력") },
+        text = {
+            Column {
+                Text(
+                    "1분 ~ 720분(12시간) 사이로 입력해주세요.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { new -> text = new.filter { it.isDigit() }.take(3) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    trailingIcon = { Text("분", modifier = Modifier.padding(end = 14.dp)) },
+                    isError = text.isNotEmpty() && !valid,
+                    supportingText = {
+                        if (!valid && text.isNotEmpty()) {
+                            Text("1 ~ 720 사이 숫자만 가능합니다.")
+                        } else if (parsed != null && parsed >= 60) {
+                            Text(
+                                "= ${formatMinutes(parsed)}",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { if (valid) onConfirm(parsed!!) }, enabled = valid) {
+                Text("확인")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("취소") }
+        },
+    )
 }
 
 @Composable

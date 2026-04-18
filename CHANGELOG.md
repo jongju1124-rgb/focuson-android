@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-04-18
+
+### Added
+- **세션 시간 직접 입력** — 프리셋 칩(15/30/60/120/240/480분) 오른쪽에 "✏️ 직접 입력" 칩 추가. 탭하면 1~720분 범위 숫자 입력 다이얼로그 열림
+- 분 표시를 "150분" 같은 긴 값 대신 "2시간 30분"으로 포맷
+
 ## [0.2.1] - 2026-04-18
 
 ### Changed
@@ -48,7 +54,8 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.2
 [0.2.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.1
 [0.2.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.1.0
