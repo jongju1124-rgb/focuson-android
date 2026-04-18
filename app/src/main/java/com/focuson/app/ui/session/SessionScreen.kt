@@ -13,19 +13,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,7 +41,6 @@ import kotlinx.coroutines.delay
 fun SessionScreen(onEndSession: (force: Boolean) -> Unit) {
     // 초 단위로만 상태 갱신 → 불필요한 recomposition 방지
     var nowSec by remember { mutableLongStateOf(System.currentTimeMillis() / 1000L) }
-    var showEndDialog by remember { mutableStateOf(false) }
     val haptics = LocalHapticFeedback.current
 
     LaunchedEffect(Unit) {
@@ -163,7 +158,7 @@ fun SessionScreen(onEndSession: (force: Boolean) -> Unit) {
                 Button(
                     onClick = {
                         haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                        showEndDialog = true
+                        onEndSession(false)
                     },
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -176,26 +171,5 @@ fun SessionScreen(onEndSession: (force: Boolean) -> Unit) {
                 }
             }
         }
-    }
-
-    if (showEndDialog) {
-        AlertDialog(
-            onDismissRequest = { showEndDialog = false },
-            title = { Text("집중 세션을 끝낼까요?") },
-            text = {
-                Text(
-                    "%d분 %02d초 남았어요. 지금 끝내면 기록에 중도 종료로 남습니다.".format(minutes, seconds),
-                )
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    showEndDialog = false
-                    onEndSession(false)
-                }) { Text("종료") }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEndDialog = false }) { Text("계속 집중") }
-            },
-        )
     }
 }

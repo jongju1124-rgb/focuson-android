@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-04-18
+
+### Changed
+- **차단 오버레이** — 동작하지 않던 "홈으로 돌아가기" 버튼 제거, "홈 버튼을 눌러 나가세요" 안내만 표시
+- **세션 종료** — 확인 다이얼로그 없이 버튼 누르면 즉시 종료
+- **접근성 권한 가이드** — 삼성 One UI 실제 동작 순서에 맞춰 3단계로 재구성 (먼저 접근성 토글 시도 → 제한된 설정 ⋮ 활성화 → 다시 토글 ON)
+
 ## [0.2.0] - 2026-04-17
 
 ### Added
@@ -41,6 +48,7 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.1
 [0.2.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.0
 [0.1.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.1.0

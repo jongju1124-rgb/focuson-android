@@ -317,11 +317,11 @@ private fun RestrictedSettingsGuide(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("접근성 허용 2단계 안내") },
+        title = { Text("접근성 허용 3단계") },
         text = {
             Column {
                 Text(
-                    "Android 보안 정책상 Play Store 외부에서 설치한 앱은 접근성 권한이 기본 차단됩니다.",
+                    "사이드로드 앱은 Android 보안 정책상 접근성 권한이 기본 차단됩니다. 순서대로 따라 하세요.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -329,14 +329,20 @@ private fun RestrictedSettingsGuide(
 
                 StepRow(
                     number = "1",
-                    title = "제한 해제 (한 번만)",
-                    detail = "[앱 정보 열기] → 우측 상단 ⋮ → \"제한된 설정 허용\" 탭",
+                    title = "접근성 설정 열기 → 토글 ON 시도",
+                    detail = "\"포커스온 차단 서비스\" 토글을 켜면 \"제한된 설정\" 안내가 뜹니다. 확인 후 뒤로.",
                 )
                 Spacer(Modifier.height(10.dp))
                 StepRow(
                     number = "2",
-                    title = "접근성 서비스 켜기",
-                    detail = "[접근성 설정 열기] → \"포커스온 차단 서비스\" 찾아 토글 ON",
+                    title = "앱 정보 → ⋮ 메뉴 → 제한된 설정 허용",
+                    detail = "1단계를 거쳐야 ⋮(점 3개)가 생깁니다. 삼성은 화면 맨 위 오른쪽에 나타나요.",
+                )
+                Spacer(Modifier.height(10.dp))
+                StepRow(
+                    number = "3",
+                    title = "다시 접근성 설정 → 토글 ON",
+                    detail = "이번엔 정상적으로 켜집니다.",
                 )
 
                 Spacer(Modifier.height(14.dp))
@@ -346,20 +352,21 @@ private fun RestrictedSettingsGuide(
                     exit = fadeOut() + shrinkVertically(),
                 ) {
                     Text(
-                        "제한 해제는 한 번만 하면 돼요. 해제 후 돌아와서 접근성 설정을 여세요.",
+                        "⋮ 메뉴가 안 보이면 1단계를 먼저 시도하세요. 토글을 시도해 봐야 메뉴가 활성화됩니다.",
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        fontWeight = FontWeight.Medium,
                     )
                 }
             }
         },
         confirmButton = {
-            TextButton(onClick = onOpenAppDetails) { Text("1. 앱 정보 열기") }
+            TextButton(onClick = onOpenAccessibility) { Text("1. 접근성 설정 열기") }
         },
         dismissButton = {
             Row {
                 TextButton(onClick = onDismiss) { Text("닫기") }
-                TextButton(onClick = onOpenAccessibility) { Text("2. 접근성 설정 열기") }
+                TextButton(onClick = onOpenAppDetails) { Text("2. 앱 정보 열기") }
             }
         },
     )

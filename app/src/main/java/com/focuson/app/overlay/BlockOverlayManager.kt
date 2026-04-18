@@ -11,7 +11,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -121,22 +120,18 @@ class BlockOverlayManager(private val context: Context) {
             updateRemainingText(this)
         }
 
-        val button = Button(context).apply {
-            text = context.getString(R.string.overlay_back_to_home)
-            setOnClickListener {
-                val intent = android.content.Intent(android.content.Intent.ACTION_MAIN).apply {
-                    addCategory(android.content.Intent.CATEGORY_HOME)
-                    flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                runCatching { context.startActivity(intent) }
-            }
+        val hint = TextView(context).apply {
+            text = context.getString(R.string.overlay_back_hint)
+            setTextColor(AColor.parseColor("#94A3B8"))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+            gravity = Gravity.CENTER
+            setPadding(0, dp(16), 0, 0)
         }
 
         column.addView(title)
         column.addView(message)
         column.addView(remaining)
-        column.addView(Space(dp(16)))
-        column.addView(button)
+        column.addView(hint)
 
         container.addView(
             column,
@@ -155,11 +150,6 @@ class BlockOverlayManager(private val context: Context) {
         val m = totalSec / 60
         val s = totalSec % 60
         tv.text = context.getString(R.string.overlay_remaining, m.toInt(), s.toInt())
-    }
-
-    @Suppress("FunctionName")
-    private fun Space(heightPx: Int): View = View(context).apply {
-        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, heightPx)
     }
 
     private fun dp(v: Int): Int =
