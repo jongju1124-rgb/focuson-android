@@ -38,7 +38,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,20 +59,10 @@ fun HomeScreen(
     onStartPreset: (PresetMode, Int, Boolean) -> Unit,
     onOpenCustomize: (PresetMode) -> Unit,
     onOpenSettings: () -> Unit,
-    initialExpandedMode: PresetMode? = null,
-    onPresetConsumed: () -> Unit = {},
 ) {
-    var focusedMode by remember { mutableStateOf(initialExpandedMode) }
+    var focusedMode by remember { mutableStateOf<PresetMode?>(null) }
     val haptics = LocalHapticFeedback.current
     var confirmStart by remember { mutableStateOf<Triple<PresetMode, Int, Boolean>?>(null) }
-
-    // 위젯에서 넘어온 초기값은 최초 1회만 반영
-    LaunchedEffect(initialExpandedMode) {
-        if (initialExpandedMode != null) {
-            focusedMode = initialExpandedMode
-            onPresetConsumed()
-        }
-    }
 
     Scaffold { inner: PaddingValues ->
         Column(

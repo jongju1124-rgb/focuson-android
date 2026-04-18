@@ -4,6 +4,27 @@
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-04-18
+
+### Fixed
+- **차단 오버레이 탭으로 나가기** — `FLAG_NOT_FOCUSABLE` 때문에 터치가 오버레이를 통과해서 아래 앱으로 새던 버그. 플래그 제거 + `performGlobalAction(GLOBAL_ACTION_HOME)` 으로 확실하게 홈으로 이동
+- 오버레이 레이아웃 간결화 (타이틀/메시지/시간 폰트·여백 축소)
+
+### Changed
+- **위젯 프리셋 탭 → 바로 세션 시작** — 앱을 여는 게 아니라 `WidgetActionReceiver` broadcast → 서비스 바로 시작
+  - 프리셋 기본값(defaultDurationMin, strictByDefault) 으로 시작
+  - 권한 없으면 토스트 + MainActivity 로 이동
+  - 이미 세션 진행 중이면 무시
+- **위젯 UI 상태 반영형으로 재설계**
+  - 비활성: 상단 "포커스온 / 프리셋 탭하면 바로 세션 시작" · 4칩 모두 선명
+  - 활성: 상단 "📚 수험생 중 · 12:34" · 현재 모드 칩만 선명, 나머지 프리셋은 흐림
+  - **OFF 칩** 추가 (맨 왼쪽)
+    - 활성 세션: 빨강, 탭하면 세션 종료 (엄격모드 제외)
+    - 비활성: 회색, 탭해도 no-op (앱 열기만)
+
+### Removed
+- `MainActivity` 의 `widget_preset_id` 자동 펼침 로직 (위젯이 직접 서비스 호출하므로 불필요)
+
 ## [0.3.0] - 2026-04-18
 
 ### Added
@@ -66,7 +87,8 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.1
 [0.3.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.0
 [0.2.2]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.2
 [0.2.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.1

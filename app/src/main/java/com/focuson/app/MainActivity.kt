@@ -1,6 +1,5 @@
 package com.focuson.app
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,10 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
@@ -30,43 +26,24 @@ import com.focuson.app.ui.onboarding.PermissionScreen
 import com.focuson.app.ui.session.SessionScreen
 import com.focuson.app.ui.theme.FocusOnTheme
 import com.focuson.app.util.PermissionChecker
-import com.focuson.app.widget.FocusOnWidgetProvider
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-    // 위젯에서 전달된 preset id — Compose 에서 관측 가능하도록 mutableState
-    private var widgetPresetId by mutableStateOf<String?>(null)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        widgetPresetId = intent?.getStringExtra(FocusOnWidgetProvider.EXTRA_WIDGET_PRESET_ID)
         setContent {
             FocusOnTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    FocusOnRoot(
-                        widgetPresetId = widgetPresetId,
-                        onConsumeWidgetPreset = { widgetPresetId = null },
-                    )
+                    FocusOnRoot()
                 }
             }
-        }
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent)
-        intent.getStringExtra(FocusOnWidgetProvider.EXTRA_WIDGET_PRESET_ID)?.let {
-            widgetPresetId = it
         }
     }
 }
 
 @Composable
-private fun FocusOnRoot(
-    widgetPresetId: String?,
-    onConsumeWidgetPreset: () -> Unit,
-) {
+private fun FocusOnRoot() {
     val nav = rememberNavController()
     val context = LocalContext.current
     val app = FocusOnApp.instance
@@ -88,13 +65,7 @@ private fun FocusOnRoot(
             })
         }
         composable("home") {
-            val initialPreset = remember(widgetPresetId) {
-                widgetPresetId?.let(PresetMode::fromId)
-            }
-            // 소비 후에는 다시 같은 탭 = 같은 값이 와도 반응하도록 초기 상태만 사용
             HomeScreen(
-                initialExpandedMode = initialPreset,
-                onPresetConsumed = onConsumeWidgetPreset,
                 onStartPreset = { mode, minutes, strict ->
                     val ok = PermissionChecker.accessibilityGranted(context) && PermissionChecker.overlayGranted(context)
                     if (!ok) {

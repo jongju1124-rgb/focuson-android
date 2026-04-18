@@ -21,10 +21,16 @@ import com.focuson.app.service.AppBlockerAccessibilityService
 
 /**
  * Accessibility service 안에서 full-screen overlay 를 올렸다 내렸다 함.
- * Compose 를 overlay 에서 쓰려면 ViewTreeLifecycleOwner 수동 세팅 필요하지만
- * 여기서는 단순 View 로 충분 — 의존성을 최소화.
+ *
+ * 오버레이 아무 곳이나 탭하면 [onTapRequested] 호출 → accessibility 서비스가
+ * `performGlobalAction(GLOBAL_ACTION_HOME)` 실행해서 홈으로 나감.
+ * (이전 버전에서 Button 의 startActivity 방식은 FLAG_NOT_FOCUSABLE 때문에
+ *  터치가 밑으로 새는 문제 + Activity 백그라운드 launch 제약으로 안 됐음.)
  */
-class BlockOverlayManager(private val context: Context) {
+class BlockOverlayManager(
+    private val context: Context,
+    private val onTapRequested: () -> Unit = {},
+) {
 
     private val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     private val repo = AppRepository(context)
@@ -51,8 +57,8 @@ class BlockOverlayManager(private val context: Context) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             else @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_SYSTEM_ALERT,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+            // ⚠️ FLAG_NOT_FOCUSABLE 는 빼야 터치가 오버레이에 잡힘
+            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED,
             PixelFormat.TRANSLUCENT,
         )
@@ -87,19 +93,22 @@ class BlockOverlayManager(private val context: Context) {
     private fun buildView(reason: Reason): View {
         val container = FrameLayout(context).apply {
             setBackgroundColor(AColor.parseColor("#E6101828"))
-            isClickable = true; isFocusable = true
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { onTapRequested() }
         }
         val column = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
-            setPadding(dp(32), dp(32), dp(32), dp(32))
+            setPadding(dp(28), dp(28), dp(28), dp(28))
         }
 
         val title = TextView(context).apply {
             text = context.getString(R.string.overlay_blocked_title)
             setTextColor(AColor.WHITE)
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 32f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 28f)
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            gravity = Gravity.CENTER
         }
 
         val message = TextView(context).apply {
@@ -108,24 +117,25 @@ class BlockOverlayManager(private val context: Context) {
                 is Reason.SiteBlocked -> context.getString(R.string.overlay_blocked_site)
             }
             setTextColor(AColor.parseColor("#CBD5E1"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
             gravity = Gravity.CENTER
-            setPadding(0, dp(12), 0, dp(24))
+            setPadding(0, dp(8), 0, dp(18))
         }
 
         val remaining = TextView(context).apply {
             setTextColor(AColor.parseColor("#F5C542"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 22f)
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+            gravity = Gravity.CENTER
             updateRemainingText(this)
         }
 
         val hint = TextView(context).apply {
             text = context.getString(R.string.overlay_back_hint)
             setTextColor(AColor.parseColor("#94A3B8"))
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 13f)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
             gravity = Gravity.CENTER
-            setPadding(0, dp(16), 0, 0)
+            setPadding(0, dp(14), 0, 0)
         }
 
         column.addView(title)
@@ -137,7 +147,7 @@ class BlockOverlayManager(private val context: Context) {
             column,
             FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT,
                 Gravity.CENTER,
             ),
         )

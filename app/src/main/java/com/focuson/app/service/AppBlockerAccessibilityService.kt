@@ -12,7 +12,10 @@ class AppBlockerAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        overlayManager = BlockOverlayManager(this)
+        overlayManager = BlockOverlayManager(this) {
+            // 오버레이 아무 곳이나 탭 → 홈으로
+            performGlobalAction(GLOBAL_ACTION_HOME)
+        }
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {

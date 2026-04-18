@@ -92,6 +92,16 @@
                 android:resource="@xml/widget_focuson_info" />
         </receiver>
 
+        <!-- 위젯 칩 탭 액션 (START/STOP) -->
+        <receiver
+            android:name=".widget.WidgetActionReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.focuson.app.widget.ACTION_START_SESSION" />
+                <action android:name="com.focuson.app.widget.ACTION_STOP_SESSION" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
