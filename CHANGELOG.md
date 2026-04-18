@@ -4,6 +4,18 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-04-18
+
+### Added
+- **홈 화면 위젯** — 4×2 크기 (리사이즈 가능)
+  - 비활성: 3개 프리셋 칩 (📚 수험생 / 💼 직장인 / 🧘 명상) — 탭하면 해당 프리셋이 펼쳐진 채로 앱 열림
+  - 활성 세션: 모드 이름 + 남은 시간(MM:SS) 표시. 탭하면 세션 화면으로
+  - 5초마다 자동 갱신 (BlockSessionService ticker 연동)
+
+### Changed
+- `MainActivity` `launchMode="singleTop"` — 위젯 재탭 시 새 인스턴스 대신 기존 액티비티 재활용
+- `HomeScreen` 에 `initialExpandedMode` 파라미터 추가 (위젯에서 넘어온 프리셋 자동 펼침)
+
 ## [0.2.2] - 2026-04-18
 
 ### Added
@@ -54,7 +66,8 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.0
 [0.2.2]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.2
 [0.2.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.1
 [0.2.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.2.0

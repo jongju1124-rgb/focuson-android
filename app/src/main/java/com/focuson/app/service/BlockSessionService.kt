@@ -20,6 +20,7 @@ import com.focuson.app.data.repo.BlockRuleRepository
 import com.focuson.app.domain.engine.BlockEngine
 import com.focuson.app.domain.model.ActiveSession
 import com.focuson.app.domain.model.PresetMode
+import com.focuson.app.widget.FocusOnWidgetProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -94,12 +95,14 @@ class BlockSessionService : Service() {
             )
             SettingsStore(this@BlockSessionService).setActiveSession(sessionId, modeId, end, strict)
 
+            FocusOnWidgetProvider.requestUpdate(this@BlockSessionService)
             ticker?.cancel()
             ticker = launch {
                 while (isActive) {
                     val remaining = BlockEngine.active()?.remainingMillis() ?: 0L
                     if (remaining <= 0L) { stopSession(force = true); break }
                     updateNotification(mode, end)
+                    FocusOnWidgetProvider.requestUpdate(this@BlockSessionService)
                     delay(5_000L)
                 }
             }
@@ -139,12 +142,14 @@ class BlockSessionService : Service() {
                     allowedPackages = allowed,
                 )
             )
+            FocusOnWidgetProvider.requestUpdate(this@BlockSessionService)
             ticker?.cancel()
             ticker = launch {
                 while (isActive) {
                     val remaining = BlockEngine.active()?.remainingMillis() ?: 0L
                     if (remaining <= 0L) { stopSession(force = true); break }
                     updateNotification(mode, endMs)
+                    FocusOnWidgetProvider.requestUpdate(this@BlockSessionService)
                     delay(5_000L)
                 }
             }
@@ -165,6 +170,7 @@ class BlockSessionService : Service() {
             BlockEngine.set(null)
             store.clearActiveSession()
             ticker?.cancel()
+            FocusOnWidgetProvider.requestUpdate(this@BlockSessionService)
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }

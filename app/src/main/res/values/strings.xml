@@ -81,4 +81,7 @@
     <!-- 에러/안내 -->
     <string name="error_generic">문제가 발생했어요. 잠시 후 다시 시도해주세요.</string>
     <string name="info_session_scheduled">%1$s 에 자동 시작 예약되었어요.</string>
+
+    <!-- 위젯 -->
+    <string name="widget_description">홈 화면에서 프리셋 바로 시작 · 진행 중 세션 남은 시간 표시</string>
 </resources>
