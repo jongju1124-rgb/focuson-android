@@ -92,7 +92,7 @@ class FocusOnWidgetProvider : AppWidgetProvider() {
             rv.setOnClickPendingIntent(R.id.widget_preset_meditation, openAppIntent(context))
         } else {
             // ── 비활성 ──
-            rv.setTextViewText(R.id.widget_status_title, "포커스온")
+            rv.setTextViewText(R.id.widget_status_title, context.getString(R.string.app_name))
             rv.setTextViewText(R.id.widget_status_sub, "프리셋 탭하면 바로 세션 시작")
             rv.setTextViewText(R.id.widget_status_time, "")
 

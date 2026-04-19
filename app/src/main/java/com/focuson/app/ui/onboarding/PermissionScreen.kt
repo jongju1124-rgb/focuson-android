@@ -330,7 +330,7 @@ private fun RestrictedSettingsGuide(
                 StepRow(
                     number = "1",
                     title = "접근성 설정 열기 → 토글 ON 시도",
-                    detail = "\"포커스온 차단 서비스\" 토글을 켜면 \"제한된 설정\" 안내가 뜹니다. 확인 후 뒤로.",
+                    detail = "접근성 서비스 목록에서 이 앱을 찾아 토글을 켜면 \"제한된 설정\" 안내가 뜹니다. 확인 후 뒤로.",
                 )
                 Spacer(Modifier.height(10.dp))
                 StepRow(

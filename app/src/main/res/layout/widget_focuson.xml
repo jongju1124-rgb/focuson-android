@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="포커스온"
+            android:text="@string/app_name"
             android:textColor="#E2E8F0"
             android:textSize="13sp"
             android:textStyle="bold"

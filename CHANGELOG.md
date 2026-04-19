@@ -4,6 +4,22 @@
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-04-19
+
+### Changed
+- **Standard 에디션 이름 변경** — "포커스온" → **"앱차단"**
+  - `app_name` + 관련 `accessibility_service_label`·description·위젯 타이틀 일괄 교체
+  - `applicationId` 는 `com.focuson.app` 그대로 유지 (기존 설치 데이터 보존)
+  - 내부 클래스명 (`FocusOnApp`, `FocusOnTheme`, `AppBlockerAccessibilityService`) 도 그대로
+- **Gyuwon 에디션 (`장규원이 중간고사 대비`) 은 변경 없음** — flavor override 그대로 유지
+- 서비스의 "우리 앱 감지" 키워드는 `applicationInfo.loadLabel()` 기반 런타임 구성이라 자동 반영
+
+### 호환성
+- 기존 v0.4.1 (포커스온) 사용자는 덮어쓰기 설치 시 앱 이름만 "앱차단" 으로 바뀌고 데이터·세션·Pro 라이선스 모두 유지됨
+
+### ⚠️ 주의
+"AppBlock" 은 전 세계 1천만+ 다운로드 실존 앱. 사이드로드 상태에선 문제없지만 Play Store 출시 시 충돌 가능성 있음. 장기적으로는 독자적 이름 고려 권장.
+
 ## [0.4.1] - 2026-04-19
 
 ### Changed
@@ -157,7 +173,8 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.4.2
 [0.4.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.4.1
 [0.4.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.4.0
 [0.3.3]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.3
