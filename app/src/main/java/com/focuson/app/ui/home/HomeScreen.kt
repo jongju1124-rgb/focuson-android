@@ -59,6 +59,8 @@ fun HomeScreen(
     onStartPreset: (PresetMode, Int, Boolean) -> Unit,
     onOpenCustomize: (PresetMode) -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenStats: () -> Unit = {},
+    onOpenPro: () -> Unit = {},
 ) {
     var focusedMode by remember { mutableStateOf<PresetMode?>(null) }
     val haptics = LocalHapticFeedback.current
@@ -97,10 +99,23 @@ fun HomeScreen(
             }
 
             Spacer(Modifier.weight(1f))
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                OutlinedButton(
+                    onClick = onOpenStats,
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.weight(1f).height(48.dp),
+                ) { Text("📊 통계") }
+                OutlinedButton(
+                    onClick = onOpenPro,
+                    shape = RoundedCornerShape(14.dp),
+                    modifier = Modifier.weight(1f).height(48.dp),
+                ) { Text("💛 Pro") }
+            }
+            Spacer(Modifier.height(8.dp))
             OutlinedButton(
                 onClick = onOpenSettings,
                 shape = RoundedCornerShape(14.dp),
-                modifier = Modifier.fillMaxWidth().height(48.dp),
+                modifier = Modifier.fillMaxWidth().height(44.dp),
             ) {
                 Text(stringResource(R.string.action_settings))
             }

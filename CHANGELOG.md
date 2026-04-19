@@ -4,6 +4,39 @@
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-04-18
+
+### Added
+- **Pro 티어 시스템** — 1회 결제 평생 이용
+  - `ProTier` enum (FREE / TIER1 1,000원 / TIER2 2,900원 / TIER3 4,900원)
+  - `SettingsStore.proTier` 로 상태 관리 + `LicenseVerifier` HMAC 오프라인 검증 (서버 없음)
+- **통계 화면** (`StatsScreen`)
+  - 총 집중 시간 / 완주 세션 / 총 세션 / 완주율
+  - 최근 7일 (무료) ~ 30일 (Pro) 일별 막대 그래프
+  - 무료 사용자는 그래프 밑에 Pro 업그레이드 안내 카드
+- **Pro 업그레이드 화면** (`ProScreen`)
+  - 3티어 카드 선택 → 결제 다이얼로그 (토스 송금 / 계좌 복사 / 이메일 문의)
+  - 라이선스 키 등록 다이얼로그 (이메일 + 티어 + 16자리 키)
+- **홈 화면 하단** — [📊 통계] [💛 Pro] 버튼 추가
+
+### Infra
+- `buildConfig = true`, `LICENSE_SECRET` / `TOSS_ID` / 계좌정보 등 `keystore.properties` → `BuildConfig` 로 주입
+- `scripts/generate_license.py` — 개발자용 라이선스 키 발급 CLI
+- `SessionDao` 에 통계 집계 쿼리 (`totalFocusedMsSince`, `completedCountSince`, `findSince` 등)
+
+### 무료 vs Pro 기능 분할
+| 기능 | FREE | TIER1 | TIER2 | TIER3 |
+|------|:---:|:---:|:---:|:---:|
+| 기본 차단 (3 프리셋) | ✅ | ✅ | ✅ | ✅ |
+| 차단 오버레이·위젯·엄격모드 | ✅ | ✅ | ✅ | ✅ |
+| 통계 — 지난 7일 | ✅ | ✅ | ✅ | ✅ |
+| 통계 — 전체 기간 | ❌ | ✅ | ✅ | ✅ |
+| 무제한 커스텀 프리셋 | ❌ | ❌ | ✅ (예정) | ✅ (예정) |
+| 스케줄 자동화 | ❌ | ❌ | ❌ | ✅ (예정) |
+| 스마트 트리거 | ❌ | ❌ | ❌ | ✅ (예정) |
+
+※ TIER2/TIER3 신규 기능은 다음 릴리즈에서 구현. v0.4.0 은 **결제 · 통계 인프라** 중심.
+
 ## [0.3.3] - 2026-04-18
 
 ### Added
@@ -111,7 +144,8 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.3.3...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.4.0
 [0.3.3]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.3
 [0.3.2]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.2
 [0.3.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.1

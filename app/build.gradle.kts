@@ -20,8 +20,8 @@ android {
         applicationId = "com.focuson.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 8
-        versionName = "0.3.3"
+        versionCode = 9
+        versionName = "0.4.0"
 
         vectorDrawables { useSupportLibrary = true }
         resourceConfigurations += listOf("ko", "en")
@@ -30,6 +30,39 @@ android {
         ndk {
             abiFilters += listOf("arm64-v8a")
         }
+
+        // ── Pro 라이선스 · 결제 정보 ───────────────────────────
+        // keystore.properties 에서 읽음. 누락 시 dev default 사용 (릴리즈 빌드는 반드시 채워야 함)
+        buildConfigField(
+            "String",
+            "LICENSE_SECRET",
+            "\"${keystoreProps.getProperty("licenseSecret", "dev-secret-change-me")}\"",
+        )
+        buildConfigField(
+            "String",
+            "TOSS_ID",
+            "\"${keystoreProps.getProperty("tossId", "yourTossId")}\"",
+        )
+        buildConfigField(
+            "String",
+            "PAYMENT_BANK",
+            "\"${keystoreProps.getProperty("paymentBank", "토스뱅크")}\"",
+        )
+        buildConfigField(
+            "String",
+            "PAYMENT_ACCOUNT",
+            "\"${keystoreProps.getProperty("paymentAccount", "0000-0000-0000")}\"",
+        )
+        buildConfigField(
+            "String",
+            "PAYMENT_HOLDER",
+            "\"${keystoreProps.getProperty("paymentHolder", "개발자")}\"",
+        )
+        buildConfigField(
+            "String",
+            "DEV_EMAIL",
+            "\"${keystoreProps.getProperty("devEmail", "dev@example.com")}\"",
+        )
     }
 
     // 기본(포커스온) / gyuwon(장규원이 중간고사 대비) 두 에디션
@@ -76,7 +109,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
-    buildFeatures { compose = true }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
     packaging {
         resources {
             excludes += listOf(

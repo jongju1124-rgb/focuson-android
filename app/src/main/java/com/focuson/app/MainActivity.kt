@@ -23,7 +23,9 @@ import com.focuson.app.ui.custom.ModeDetailScreen
 import com.focuson.app.ui.custom.SiteRulesScreen
 import com.focuson.app.ui.home.HomeScreen
 import com.focuson.app.ui.onboarding.PermissionScreen
+import com.focuson.app.ui.pro.ProScreen
 import com.focuson.app.ui.session.SessionScreen
+import com.focuson.app.ui.stats.StatsScreen
 import com.focuson.app.ui.theme.FocusOnTheme
 import com.focuson.app.util.PermissionChecker
 import kotlinx.coroutines.launch
@@ -82,7 +84,18 @@ private fun FocusOnRoot() {
                 },
                 onOpenCustomize = { mode -> nav.navigate("mode/${mode.id}") },
                 onOpenSettings = { nav.navigate("permission") },
+                onOpenStats = { nav.navigate("stats") },
+                onOpenPro = { nav.navigate("pro") },
             )
+        }
+        composable("stats") {
+            StatsScreen(
+                onBack = { nav.popBackStack() },
+                onUpgradeClick = { nav.navigate("pro") },
+            )
+        }
+        composable("pro") {
+            ProScreen(onBack = { nav.popBackStack() })
         }
         composable("session") {
             SessionScreen(
