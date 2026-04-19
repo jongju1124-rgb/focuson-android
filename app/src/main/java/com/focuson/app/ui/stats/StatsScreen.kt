@@ -66,7 +66,7 @@ fun StatsScreen(
     val dao = remember { FocusOnDatabase.get(context).sessionDao() }
     val proTierId by app.settingsStore.proTierId.collectAsState(initial = "free")
     val tier = ProTier.fromId(proTierId)
-    val hasFullStats = tier.atLeast(ProTier.TIER1)
+    val hasFullStats = tier.atLeast(ProTier.PRO)
 
     // 무료: 지난 7일만 / Pro: 전체 기간 (최대 30일 그래프)
     val days = if (hasFullStats) 30 else 7

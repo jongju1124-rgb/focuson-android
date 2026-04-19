@@ -21,7 +21,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,8 +60,8 @@ fun ProScreen(onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val currentTierId by app.settingsStore.proTierId.collectAsState(initial = "free")
     val currentTier = ProTier.fromId(currentTierId)
+    val isPro = currentTier.atLeast(ProTier.PRO)
 
-    var selectedTier by remember { mutableStateOf<ProTier?>(null) }
     var showPaymentSheet by remember { mutableStateOf(false) }
     var showLicenseSheet by remember { mutableStateOf(false) }
 
@@ -92,38 +91,30 @@ fun ProScreen(onBack: () -> Unit) {
             )
             Spacer(Modifier.height(6.dp))
             Text(
-                "기본 기능은 평생 무료. Pro는 데이터·개인화·자동화 기능을 열어줍니다.",
+                "기본 기능은 평생 무료. Pro는 데이터·개인화 기능을 열어줍니다.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
-            if (currentTier != ProTier.FREE) {
+            if (isPro) {
                 Spacer(Modifier.height(14.dp))
                 CurrentTierBanner(currentTier)
             }
 
             Spacer(Modifier.height(18.dp))
-            listOf(ProTier.TIER1, ProTier.TIER2, ProTier.TIER3).forEach { tier ->
-                TierCard(
-                    tier = tier,
-                    isCurrent = currentTier == tier,
-                    isRecommended = tier == ProTier.TIER3,
-                    onClick = {
-                        selectedTier = tier
-                        showPaymentSheet = true
-                    },
-                )
-                Spacer(Modifier.height(12.dp))
-            }
+            ProCard(
+                isCurrent = isPro,
+                onClick = { showPaymentSheet = true },
+            )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(12.dp))
             OutlinedButton(
                 onClick = { showLicenseSheet = true },
                 shape = RoundedCornerShape(12.dp),
                 modifier = Modifier.fillMaxWidth().height(48.dp),
             ) { Text("이미 라이선스 키가 있어요") }
 
-            Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(18.dp))
             Text(
                 "· 결제는 토스 송금으로 진행됩니다.\n" +
                     "· 송금 후 메시지란에 본인 이메일을 적어주세요.\n" +
@@ -135,9 +126,9 @@ fun ProScreen(onBack: () -> Unit) {
         }
     }
 
-    if (showPaymentSheet && selectedTier != null) {
+    if (showPaymentSheet) {
         PaymentDialog(
-            tier = selectedTier!!,
+            tier = ProTier.PRO,
             onOpenToss = { amount ->
                 val ok = TossPay.openToss(context, amount)
                 if (!ok) TossPay.copyAccount(context)
@@ -146,9 +137,9 @@ fun ProScreen(onBack: () -> Unit) {
             onEmailInquiry = {
                 TossPay.openEmail(
                     context,
-                    subject = "Pro 라이선스 요청 (${selectedTier!!.displayName})",
+                    subject = "Pro 라이선스 요청",
                     body = "안녕하세요,\n" +
-                        "${selectedTier!!.displayName} (${selectedTier!!.priceKrw}원) 구매했습니다.\n" +
+                        "Pro (${ProTier.PRO.priceKrw}원) 구매했습니다.\n" +
                         "이 계정 이메일: (본인 이메일 입력)\n" +
                         "\n수령하신 라이선스 키를 회신 주시면 앱에서 등록하겠습니다.",
                 )
@@ -159,10 +150,10 @@ fun ProScreen(onBack: () -> Unit) {
 
     if (showLicenseSheet) {
         LicenseInputDialog(
-            onConfirm = { email, tier, key ->
-                if (LicenseVerifier.verify(email, tier, key)) {
+            onConfirm = { email, key ->
+                if (LicenseVerifier.verify(email, ProTier.PRO, key)) {
                     scope.launch {
-                        app.settingsStore.setProLicense(tier.id, email, key)
+                        app.settingsStore.setProLicense(ProTier.PRO.id, email, key)
                     }
                     showLicenseSheet = false
                     true
@@ -192,7 +183,6 @@ private fun CurrentTierBanner(tier: ProTier) {
                 contentDescription = null,
                 tint = Color(0xFF0EA371),
             )
-            Spacer(Modifier.fillMaxWidth(0.02f))
             Column(modifier = Modifier.padding(start = 12.dp)) {
                 Text(
                     "현재 ${tier.displayName} 이용 중",
@@ -210,13 +200,11 @@ private fun CurrentTierBanner(tier: ProTier) {
 }
 
 @Composable
-private fun TierCard(
-    tier: ProTier,
+private fun ProCard(
     isCurrent: Boolean,
-    isRecommended: Boolean,
     onClick: () -> Unit,
 ) {
-    val border = if (isRecommended && !isCurrent) {
+    val border = if (!isCurrent) {
         BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
     } else {
         BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f))
@@ -231,48 +219,35 @@ private fun TierCard(
             else MaterialTheme.colorScheme.surface,
         ),
     ) {
-        Column(modifier = Modifier.padding(18.dp)) {
+        Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    tier.displayName,
+                    "Pro",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                 )
-                if (isRecommended) {
-                    Spacer(Modifier.fillMaxWidth(0.02f))
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .background(
-                                color = MaterialTheme.colorScheme.primary,
-                                shape = RoundedCornerShape(8.dp),
-                            )
-                            .padding(horizontal = 8.dp, vertical = 3.dp),
-                    ) {
-                        Text(
-                            "추천",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                }
                 Spacer(Modifier.weight(1f))
                 Text(
-                    "${"%,d".format(tier.priceKrw)}원",
+                    "${"%,d".format(ProTier.PRO.priceKrw)}원",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
-            Spacer(Modifier.height(4.dp))
+            Spacer(Modifier.height(2.dp))
             Text(
-                "평생 이용",
+                "1회 결제 · 평생 이용",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Spacer(Modifier.height(12.dp))
-            tierBullets(tier).forEach {
+            Spacer(Modifier.height(14.dp))
+            listOf(
+                "전체 기간 통계 열람 (무료는 7일 한정)",
+                "일별·주별·월별 집중 시간 그래프",
+                "완주율 · 스트릭 트래킹",
+                "✨ 무제한 커스텀 프리셋 (이름·색·앱 목록 자유 설정) — 곧 추가",
+                "향후 Pro 전용 기능 모두 무료 업데이트",
+            ).forEach {
                 Row(modifier = Modifier.padding(vertical = 3.dp)) {
                     Text("• ", color = MaterialTheme.colorScheme.primary)
                     Text(it, style = MaterialTheme.typography.bodySmall)
@@ -280,26 +255,6 @@ private fun TierCard(
             }
         }
     }
-}
-
-private fun tierBullets(tier: ProTier): List<String> = when (tier) {
-    ProTier.FREE -> emptyList()
-    ProTier.TIER1 -> listOf(
-        "전체 기간 통계 열람 (기본 7일 → 무제한)",
-        "일별/주별/월별 집중 시간 그래프",
-        "완주율 · 스트릭 트래킹",
-    )
-    ProTier.TIER2 -> listOf(
-        "TIER1의 모든 기능",
-        "✨ 무제한 커스텀 프리셋 (이름·색·앱 목록 자유 설정)",
-        "예: \"새벽 코딩\", \"영어 공부\", \"운동 전 1시간\"",
-    )
-    ProTier.TIER3 -> listOf(
-        "TIER2의 모든 기능",
-        "⏰ 스케줄 자동화 — 요일·시간 반복 세션",
-        "🎯 스마트 트리거 — 특정 앱 N분 사용시 자동 차단",
-        "모든 향후 기능 무료 업데이트",
-    )
 }
 
 @Composable
@@ -358,12 +313,11 @@ private fun PaymentDialog(
 
 @Composable
 private fun LicenseInputDialog(
-    onConfirm: (email: String, tier: ProTier, key: String) -> Boolean,
+    onConfirm: (email: String, key: String) -> Boolean,
     onDismiss: () -> Unit,
 ) {
     var email by remember { mutableStateOf("") }
     var key by remember { mutableStateOf("") }
-    var selectedTier by remember { mutableStateOf(ProTier.TIER3) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
 
     AlertDialog(
@@ -372,27 +326,11 @@ private fun LicenseInputDialog(
         text = {
             Column {
                 Text(
-                    "이메일로 받으신 티어 + 라이선스 키를 입력해주세요.",
+                    "이메일로 받으신 이메일·키를 입력해주세요.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(12.dp))
-                Text("티어", style = MaterialTheme.typography.labelMedium)
-                Spacer(Modifier.height(4.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    listOf(ProTier.TIER1, ProTier.TIER2, ProTier.TIER3).forEach { t ->
-                        val selected = selectedTier == t
-                        OutlinedButton(
-                            onClick = { selectedTier = t },
-                            shape = RoundedCornerShape(8.dp),
-                            colors = if (selected) ButtonDefaults.outlinedButtonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary,
-                            ) else ButtonDefaults.outlinedButtonColors(),
-                        ) { Text(t.displayName, style = MaterialTheme.typography.labelSmall) }
-                    }
-                }
-                Spacer(Modifier.height(10.dp))
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it; errorMsg = null },
@@ -420,11 +358,10 @@ private fun LicenseInputDialog(
                     errorMsg = "이메일과 키를 모두 입력해주세요."
                     return@Button
                 }
-                val ok = onConfirm(email, selectedTier, key)
-                if (!ok) errorMsg = "키가 일치하지 않아요. 이메일·티어·키를 다시 확인해주세요."
+                val ok = onConfirm(email, key)
+                if (!ok) errorMsg = "키가 일치하지 않아요. 이메일·키를 다시 확인해주세요."
             }) { Text("등록") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("취소") } },
     )
 }
-

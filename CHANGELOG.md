@@ -4,6 +4,19 @@
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-04-19
+
+### Changed
+- **Pro 티어 단순화** — 기존 3티어(1,000 / 2,900 / 4,900원) → **FREE + PRO 2단계**
+  - `ProTier` enum: `FREE`, `PRO`(2,900원) 만 남김
+  - `ProScreen`: 단일 Pro 카드 + 결제 다이얼로그
+  - `LicenseInputDialog`: 티어 선택 UI 제거 (자동 PRO)
+  - `scripts/generate_license.py`: 인자에서 tier 제거 (`python scripts/generate_license.py <email>`)
+- Pro 혜택 설명 통합: "전체 통계 + 무제한 커스텀 프리셋(예정) + 향후 모든 Pro 업데이트"
+
+### Why
+1,000원은 심리적으로 "왜 이것만?" 느낌이 강함, 4,900원은 진입 저항. 2,900원 단일 티어가 "커피 한 잔" 포지셔닝과 의사결정 속도 면에서 가장 깔끔.
+
 ## [0.4.0] - 2026-04-18
 
 ### Added
@@ -144,7 +157,8 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.4.1
 [0.4.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.4.0
 [0.3.3]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.3
 [0.3.2]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.3.2
