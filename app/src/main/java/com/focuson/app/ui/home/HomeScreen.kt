@@ -128,7 +128,7 @@ fun HomeScreen(
             title = { Text("${stringResource(mode.displayNameRes)} 시작") },
             text = {
                 Column {
-                    Text("${formatMinutes(minutes)} 동안 차단 세션을 시작합니다.")
+                    Text("${formatMinutes(minutes)} 잠수에 들어갑니다.")
                     if (strict) {
                         Spacer(Modifier.height(8.dp))
                         Text(

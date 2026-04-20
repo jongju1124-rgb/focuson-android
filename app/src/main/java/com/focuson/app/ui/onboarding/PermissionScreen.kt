@@ -413,7 +413,7 @@ private fun buildPermItems(
     PermItem(
         key = "notifications",
         title = "알림",
-        description = "세션 진행 중 상단바에 타이머를 보여줘요.",
+        description = "잠수 중 상단바에 남은 시간을 보여줘요.",
         granted = PermissionChecker.notificationsGranted(context),
         required = true,
         action = {
@@ -450,7 +450,7 @@ private fun buildPermItems(
     PermItem(
         key = "exact_alarm",
         title = "정확한 알람",
-        description = "예약한 세션을 제시간에 시작하고 싶을 때.",
+        description = "예약한 잠수를 제시간에 시작하고 싶을 때.",
         granted = PermissionChecker.exactAlarmGranted(context),
         required = false,
         action = { context.startActivity(PermissionChecker.exactAlarmIntent(context)) },

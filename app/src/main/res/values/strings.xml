@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">앱차단</string>
+    <string name="app_name">잠수모드</string>
 
     <!-- 공통 -->
     <string name="action_start">시작</string>
@@ -12,9 +12,9 @@
     <string name="action_settings">설정</string>
 
     <!-- 홈 -->
-    <string name="home_title">오늘은 어떤 모드로 집중해볼까요?</string>
-    <string name="home_subtitle">프리셋을 탭하여 바로 시작하거나 상세 설정을 열어보세요.</string>
-    <string name="home_active_session">진행중: %1$s (%2$d분 남음)</string>
+    <string name="home_title">어떻게 잠수할까요?</string>
+    <string name="home_subtitle">상황을 고르면 바로 잠수 시작. 오래 머무를수록 깊어져요.</string>
+    <string name="home_active_session">잠수중: %1$s (%2$d분 남음)</string>
 
     <!-- 프리셋 -->
     <string name="preset_student_name">수험생 모드</string>
@@ -25,33 +25,33 @@
     <string name="preset_meditation_tagline">전화·시계 외 모두 차단</string>
 
     <!-- 권한 온보딩 -->
-    <string name="onboarding_title">집중을 지켜주려면\n몇 가지 권한이 필요해요</string>
-    <string name="onboarding_subtitle">앱차단은 광고 없이 개인 사용을 위해 만들어진 앱입니다. 모든 권한은 차단 기능 구현에만 사용됩니다.</string>
+    <string name="onboarding_title">깊게 잠수하려면\n몇 가지 권한이 필요해요</string>
+    <string name="onboarding_subtitle">잠수모드는 광고 없이 개인 사용을 위해 만들어진 앱입니다. 모든 권한은 차단 기능에만 쓰입니다.</string>
     <string name="perm_notifications">알림 권한</string>
-    <string name="perm_notifications_desc">세션 진행 중임을 상단바에 표시합니다.</string>
+    <string name="perm_notifications_desc">잠수 진행 중임을 상단바에 표시합니다.</string>
     <string name="perm_overlay">다른 앱 위에 표시</string>
-    <string name="perm_overlay_desc">차단된 앱 실행 시 전체화면 안내를 띄웁니다.</string>
+    <string name="perm_overlay_desc">차단된 앱을 열면 전체화면 안내를 띄워요.</string>
     <string name="perm_usage_access">사용정보 접근</string>
     <string name="perm_usage_access_desc">어떤 앱이 실행되었는지 감지하기 위한 보조 권한입니다.</string>
     <string name="perm_accessibility">접근성 서비스</string>
-    <string name="perm_accessibility_desc">앱/웹사이트 차단의 핵심 권한. 입력 내용은 저장되지 않습니다.</string>
+    <string name="perm_accessibility_desc">앱·웹사이트 차단의 핵심 권한. 입력 내용은 저장되지 않습니다.</string>
     <string name="perm_exact_alarm">정확한 알람</string>
-    <string name="perm_exact_alarm_desc">예약된 세션을 정시에 시작합니다.</string>
+    <string name="perm_exact_alarm_desc">예약된 잠수를 정시에 시작합니다.</string>
     <string name="perm_battery_opt">배터리 최적화 제외</string>
-    <string name="perm_battery_opt_desc">삼성/샤오미 기기에서 백그라운드 종료를 막기 위해 권장됩니다.</string>
+    <string name="perm_battery_opt_desc">삼성·샤오미 기기에서 백그라운드 종료를 막기 위해 권장됩니다.</string>
     <string name="perm_grant">허용하기</string>
     <string name="perm_granted">허용됨</string>
 
-    <!-- 세션 -->
-    <string name="session_duration_label">세션 시간</string>
+    <!-- 세션 (= 잠수) -->
+    <string name="session_duration_label">잠수 시간</string>
     <string name="session_strict_label">엄격모드</string>
-    <string name="session_strict_warning">엄격모드에서는 세션이 끝날 때까지 강제로 해제할 수 없어요.</string>
+    <string name="session_strict_warning">엄격모드에서는 수면 위로 올라오기 전까지 중간에 끝낼 수 없어요.</string>
     <string name="session_remaining">%1$d:%2$02d 남음</string>
-    <string name="session_running">집중 세션 진행 중</string>
-    <string name="session_channel_name">차단 세션</string>
-    <string name="session_channel_desc">세션 진행 상태를 표시합니다.</string>
-    <string name="session_stop_confirm">세션을 지금 종료할까요?</string>
-    <string name="session_stop_strict_blocked">엄격모드라 지금은 종료할 수 없어요.</string>
+    <string name="session_running">잠수 중</string>
+    <string name="session_channel_name">잠수 세션</string>
+    <string name="session_channel_desc">잠수 진행 상태를 표시합니다.</string>
+    <string name="session_stop_confirm">수면 위로 올라올까요?</string>
+    <string name="session_stop_strict_blocked">엄격모드라 지금은 올라올 수 없어요.</string>
 
     <!-- 앱 선택 -->
     <string name="app_picker_title">차단할 앱 선택</string>
@@ -59,31 +59,31 @@
     <string name="app_picker_search_hint">앱 이름으로 검색</string>
     <string name="app_picker_selected_count">%1$d개 차단</string>
     <string name="app_picker_allowed_count">%1$d개 허용</string>
-    <string name="app_picker_hint_block">체크한 앱은 세션 중에 차단됩니다.</string>
-    <string name="app_picker_hint_allow">체크한 앱만 세션 중에 사용할 수 있습니다.</string>
+    <string name="app_picker_hint_block">체크한 앱은 잠수 중에 차단됩니다.</string>
+    <string name="app_picker_hint_allow">체크한 앱만 잠수 중에 사용할 수 있어요.</string>
 
     <!-- 사이트 -->
     <string name="site_rules_title">차단할 사이트</string>
     <string name="site_rules_hint">예: youtube.com, *.instagram.com</string>
     <string name="site_add">추가</string>
 
-    <!-- 오버레이 -->
-    <string name="overlay_blocked_title">차단됨</string>
+    <!-- 오버레이 (= 잠수 중 차단 화면) -->
+    <string name="overlay_blocked_title">잠수 중</string>
     <string name="overlay_blocked_app">지금은 %1$s 을(를) 사용할 수 없어요.</string>
-    <string name="overlay_blocked_site">이 사이트는 지금 차단되어 있어요.</string>
-    <string name="overlay_remaining">%1$d:%2$02d 후에 풀려요</string>
-    <string name="overlay_back_hint">화면 아무 곳이나 탭해서 나가기</string>
+    <string name="overlay_blocked_site">이 사이트는 지금 닫혀 있어요.</string>
+    <string name="overlay_remaining">%1$d:%2$02d 후에 올라와요</string>
+    <string name="overlay_back_hint">화면 아무 곳이나 탭해서 홈으로</string>
 
     <!-- 서비스 라벨 -->
-    <string name="accessibility_service_label">앱차단 서비스</string>
+    <string name="accessibility_service_label">잠수모드 서비스</string>
     <string name="accessibility_service_summary">선택한 앱과 웹사이트 접근을 제한합니다.</string>
-    <string name="accessibility_service_description">앱차단 앱은 설정한 세션이 진행되는 동안 차단 목록의 앱이 실행되면 홈 화면으로 되돌리고, 차단 대상 웹사이트 URL이 감지되면 알림을 표시합니다. 입력한 텍스트나 개인정보는 수집·저장·전송하지 않습니다.</string>
+    <string name="accessibility_service_description">잠수모드 앱은 설정한 세션이 진행되는 동안 차단 목록의 앱이 실행되면 홈 화면으로 되돌리고, 차단 대상 웹사이트 URL이 감지되면 알림을 표시합니다. 입력한 텍스트나 개인정보는 수집·저장·전송하지 않습니다.</string>
     <!-- 에러/안내 -->
     <string name="error_generic">문제가 발생했어요. 잠시 후 다시 시도해주세요.</string>
     <string name="info_session_scheduled">%1$s 에 자동 시작 예약되었어요.</string>
 
     <!-- 위젯 -->
-    <string name="widget_description">홈 화면에서 프리셋 바로 시작 · 진행 중 세션 남은 시간 표시</string>
+    <string name="widget_description">홈 화면에서 바로 잠수 시작 · 수면까지 남은 시간 표시</string>
     <string name="widget_preset_student_short">수험생</string>
     <string name="widget_preset_worker_short">직장인</string>
     <string name="widget_preset_meditation_short">명상</string>

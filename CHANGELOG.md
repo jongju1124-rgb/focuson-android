@@ -4,6 +4,46 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-04-20
+
+### 🌊 브랜드 리뉴얼: "앱차단" → "잠수모드"
+
+### Changed
+- **앱 이름**: `앱차단` → **`잠수모드`**
+  - 차단이라는 수동적·처벌적 프레이밍 대신, **"잠깐 사라진다"** 는 슬랭 "잠수타다" 차용
+  - "나 잠수모드야" 자연스러운 사회적 호칭 확보
+- **수면 메타포** 전면 적용
+  - 세션 → **잠수**
+  - 시작 → **잠수 시작**
+  - 종료 → **수면 위로**
+  - "차단됨" 오버레이 → **"잠수 중"**
+  - "14:54 후에 풀려요" → **"14:54 후에 올라와요"**
+  - 엄격모드: "종료할 수 없어요" → "수면 위로 올라올 수 없어요"
+- **접근성 서비스 라벨**: `앱차단 서비스` → `잠수모드 서비스`
+- **서비스 채널명**: `차단 세션` → `잠수 세션`
+- **토스트 문구** — WidgetActionReceiver 전부 수면 메타포로 교체
+  - "이미 잠수 중이에요"
+  - "수면 위로 올라왔어요"
+  - "엄격모드라 수면 위로 못 올라와요"
+- **통계 화면** 라벨: `총 집중 시간` → `총 잠수 시간`, `완주 세션` → `완주 잠수`
+
+### 색상·아이콘
+- **브랜드 색** `#FF5A3FFF` (보라) → **`#FF0B3B6B`** (심해 블루)
+- **런처 아이콘** 재설계: 수면 파동 2줄 + 아래로 가라앉는 물방울 + 거품
+- 프리셋 개별 색 (파랑·초록·보라) 은 기능적 구분자로 유지
+
+### 호환성
+- `applicationId`: `com.focuson.app` 그대로 유지 → **기존 데이터·세션·Pro 라이선스 100% 보존**
+- 내부 클래스명 (`FocusOnApp`, `AppBlockerAccessibilityService` 등) 유지
+- **Gyuwon flavor** (`장규원이 중간고사 대비`) 는 strings override 로 영향 없음
+
+### 왜 "잠수모드"?
+- ✅ 한국인에게 이미 익숙한 슬랭 "잠수타다" = 앱이 하는 일과 정확히 일치
+- ✅ 차단이 아닌 "잠깐 사라짐" 긍정 프레이밍 — 설치 저항 ↓
+- ✅ 사회적 호칭 — "나 잠수모드야" 자연스럽게 입에 붙음
+- ✅ 학생부터 직장인까지 범용
+- ✅ 독자성 (동일 이름 경쟁앱 없음)
+
 ## [0.4.2] - 2026-04-19
 
 ### Changed
@@ -173,7 +213,8 @@
 
 ---
 
-[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/jongju1124-rgb/focuson-android/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.5.0
 [0.4.2]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.4.2
 [0.4.1]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.4.1
 [0.4.0]: https://github.com/jongju1124-rgb/focuson-android/releases/tag/v0.4.0

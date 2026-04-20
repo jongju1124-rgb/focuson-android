@@ -65,7 +65,7 @@ fun SessionScreen(onEndSession: (force: Boolean) -> Unit) {
                 CircularProgressIndicator()
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    "세션이 끝났어요. 홈으로 이동합니다…",
+                    "수면 위로 올라왔어요. 홈으로 이동합니다…",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -96,7 +96,7 @@ fun SessionScreen(onEndSession: (force: Boolean) -> Unit) {
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = mode?.let { androidx.compose.ui.res.stringResource(it.displayNameRes) } ?: "집중 중",
+                text = mode?.let { androidx.compose.ui.res.stringResource(it.displayNameRes) } ?: "잠수 중",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.Medium,
@@ -148,7 +148,7 @@ fun SessionScreen(onEndSession: (force: Boolean) -> Unit) {
 
             if (active.strict) {
                 Text(
-                    "🔒 엄격모드 — 세션이 끝날 때까지 종료할 수 없어요",
+                    "🔒 엄격모드 — 시간이 다 될 때까지 수면 위로 올라올 수 없어요",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxWidth(),
@@ -167,7 +167,7 @@ fun SessionScreen(onEndSession: (force: Boolean) -> Unit) {
                     ),
                     modifier = Modifier.fillMaxWidth().height(54.dp),
                 ) {
-                    Text("세션 종료", fontWeight = FontWeight.SemiBold)
+                    Text("수면 위로", fontWeight = FontWeight.SemiBold)
                 }
             }
         }

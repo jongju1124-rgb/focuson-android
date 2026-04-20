@@ -19,7 +19,7 @@ class AppBlockerAccessibilityService : AccessibilityService() {
         buildList {
             // 패키지명 (예: com.focuson.app / com.focuson.app.gyuwon)
             add(packageName.lowercase())
-            // 사용자에게 보이는 라벨 (예: "포커스온" / "장규원이 중간고사 대비")
+            // 사용자에게 보이는 라벨 (예: "잠수모드" / "장규원이 중간고사 대비")
             runCatching {
                 val label = applicationInfo.loadLabel(packageManager).toString()
                 if (label.isNotBlank()) add(label.lowercase())
@@ -50,7 +50,7 @@ class AppBlockerAccessibilityService : AccessibilityService() {
     }
 
     private fun handleWindowStateChanged(pkg: String, e: AccessibilityEvent) {
-        // 엄격모드 중 "포커스온 자체"에 대한 우회 시도만 차단 — 다른 앱 제거·강제중지는 통과
+        // 엄격모드 중 "우리 앱 자체"에 대한 우회 시도만 차단 — 다른 앱 제거·강제중지는 통과
         if (BlockEngine.active()?.strict == true && isStrictBypassScreen(pkg, e)) {
             performGlobalAction(GLOBAL_ACTION_BACK)
             return
@@ -81,12 +81,12 @@ class AppBlockerAccessibilityService : AccessibilityService() {
     }
 
     /**
-     * 엄격모드에서 "포커스온 자체를 무력화하려는 화면"인지 판별.
+     * 엄격모드에서 "우리 앱 자체를 무력화하려는 화면"인지 판별.
      *
      * 판별 조건:
      *   1) 현재 앱이 설정/패키지 설치 관리자 패키지
      *   2) 제거/접근성 해제/강제 중지 관련 키워드 존재 (= 액션성 화면)
-     *   3) 화면 텍스트 어디엔가 "포커스온" 또는 "focuson" 이 언급됨 (= 대상이 우리 앱)
+     *   3) 화면 텍스트 어디엔가 우리 앱 라벨("잠수모드"/"장규원이 중간고사 대비") 또는 패키지명 언급됨
      *
      * (2)&(3) 둘 다 만족해야 차단. 다른 앱 제거·강제중지·다른 접근성 서비스 해제는 통과.
      */

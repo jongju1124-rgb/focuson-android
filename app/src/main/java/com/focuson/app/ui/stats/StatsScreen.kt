@@ -101,7 +101,7 @@ fun StatsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("집중 통계") },
+                title = { Text("잠수 통계") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "뒤로")
@@ -126,12 +126,12 @@ fun StatsScreen(
             // 요약 카드 3개
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 SummaryCard(
-                    label = "총 집중 시간",
+                    label = "총 잠수 시간",
                     value = formatHMS(data.totalMs),
                     modifier = Modifier.weight(1f),
                 )
                 SummaryCard(
-                    label = "완주 세션",
+                    label = "완주 잠수",
                     value = "${data.completedCount}회",
                     modifier = Modifier.weight(1f),
                 )
@@ -139,7 +139,7 @@ fun StatsScreen(
             Spacer(Modifier.height(10.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 SummaryCard(
-                    label = "총 세션",
+                    label = "총 시도",
                     value = "${data.totalCount}회",
                     modifier = Modifier.weight(1f),
                 )
@@ -153,7 +153,7 @@ fun StatsScreen(
 
             Spacer(Modifier.height(24.dp))
             Text(
-                "지난 ${days}일 일별 집중 시간",
+                "지난 ${days}일 일별 잠수 시간",
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
             )

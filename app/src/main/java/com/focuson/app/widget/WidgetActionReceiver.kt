@@ -35,7 +35,7 @@ class WidgetActionReceiver : BroadcastReceiver() {
 
         // 이미 세션 실행 중이면 무시
         if (com.focuson.app.domain.engine.BlockEngine.active() != null) {
-            Toast.makeText(context, "이미 세션이 진행 중이에요", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "이미 잠수 중이에요", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -63,7 +63,7 @@ class WidgetActionReceiver : BroadcastReceiver() {
         }
         Toast.makeText(
             context,
-            "${context.getString(mode.displayNameRes)} 시작 · ${mode.defaultDurationMin}분",
+            "${context.getString(mode.displayNameRes)} · ${mode.defaultDurationMin}분 잠수 시작",
             Toast.LENGTH_SHORT,
         ).show()
     }
@@ -71,16 +71,16 @@ class WidgetActionReceiver : BroadcastReceiver() {
     private fun handleStop(context: Context) {
         val active = com.focuson.app.domain.engine.BlockEngine.active()
         if (active == null) {
-            Toast.makeText(context, "진행 중인 세션이 없어요", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "지금은 잠수 중이 아니에요", Toast.LENGTH_SHORT).show()
             return
         }
         if (active.strict) {
-            Toast.makeText(context, "엄격모드는 중간 종료 불가", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "엄격모드라 수면 위로 못 올라와요", Toast.LENGTH_SHORT).show()
             return
         }
         val serviceIntent = BlockSessionService.stopIntent(context, force = false)
         context.startService(serviceIntent)
-        Toast.makeText(context, "세션을 종료했어요", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "수면 위로 올라왔어요", Toast.LENGTH_SHORT).show()
     }
 
     companion object {

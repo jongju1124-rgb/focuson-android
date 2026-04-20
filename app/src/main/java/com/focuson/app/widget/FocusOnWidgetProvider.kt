@@ -16,7 +16,7 @@ import com.focuson.app.domain.model.PresetMode
  * 홈 화면 위젯. 현재 세션 "상태" 를 반영한다.
  *
  * 비활성:
- *   상단: "포커스온 · 프리셋 탭해서 시작"
+ *   상단: "잠수모드 · 프리셋 탭해서 시작"
  *   칩: [OFF (회색)] [📚] [💼] [🧘]    ← 프리셋 탭 → 바로 세션 시작
  *
  * 활성 세션 (예: 수험생):
@@ -68,9 +68,9 @@ class FocusOnWidgetProvider : AppWidgetProvider() {
                 PresetMode.MEDITATION -> "🧘"
                 null -> "⏱"
             }
-            val modeName = activeMode?.let { context.getString(it.displayNameRes) } ?: "집중"
-            rv.setTextViewText(R.id.widget_status_title, "$emoji $modeName 중")
-            rv.setTextViewText(R.id.widget_status_sub, "OFF 탭하면 종료")
+            val modeName = activeMode?.let { context.getString(it.displayNameRes) } ?: "잠수"
+            rv.setTextViewText(R.id.widget_status_title, "$emoji $modeName 잠수중")
+            rv.setTextViewText(R.id.widget_status_sub, "OFF 탭하면 수면 위로")
 
             val totalSec = (active.remainingMillis() / 1000L).coerceAtLeast(0L)
             val m = totalSec / 60
@@ -93,7 +93,7 @@ class FocusOnWidgetProvider : AppWidgetProvider() {
         } else {
             // ── 비활성 ──
             rv.setTextViewText(R.id.widget_status_title, context.getString(R.string.app_name))
-            rv.setTextViewText(R.id.widget_status_sub, "프리셋 탭하면 바로 세션 시작")
+            rv.setTextViewText(R.id.widget_status_sub, "프리셋 탭하면 바로 잠수")
             rv.setTextViewText(R.id.widget_status_time, "")
 
             // OFF 비활성 (회색) → 탭 시 앱 열기 (할 일이 없으므로)

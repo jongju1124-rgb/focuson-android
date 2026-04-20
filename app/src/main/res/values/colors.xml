@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="brand_primary">#FF5A3FFF</color>
+    <!-- 잠수모드 브랜드: 심해 블루 -->
+    <color name="brand_primary">#FF0B3B6B</color>
     <color name="brand_on_primary">#FFFFFFFF</color>
+
+    <!-- 프리셋 개별 색은 유지 (기능적 구분자 역할) -->
     <color name="brand_student">#FF3D5AF1</color>
     <color name="brand_worker">#FF0EA371</color>
     <color name="brand_meditation">#FFB341FF</color>
+
     <color name="overlay_scrim">#E6101828</color>
 </resources>

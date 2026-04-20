@@ -61,7 +61,7 @@ def main():
     print()
     print("이메일 본문 템플릿:")
     print()
-    print(f"안녕하세요, 앱차단 Pro 라이선스 키입니다.")
+    print(f"안녕하세요, 잠수모드 Pro 라이선스 키입니다.")
     print(f"")
     print(f"· 이메일: {email}")
     print(f"· 키: {key}")

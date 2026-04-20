@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  잠수모드 foreground — 수면 파동 2줄 + 아래로 가라앉는 물방울.
+  108x108 viewport, 중앙 4분할 영역 (27..81) 안쪽에 배치 (adaptive icon safe zone).
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- 수면 파동 상단 -->
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M54,28 A26,26 0 1 1 53.999,28 Z M54,38 A16,16 0 1 0 54.001,38 Z" />
+        android:pathData="M32,36 Q42,30 52,36 T72,36 T82,36 L82,40 Q72,46 62,40 T42,40 T32,40 Z" />
+
+    <!-- 수면 파동 하단 (살짝 투명한 느낌은 alpha 로) -->
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M42,68 L66,68 L66,74 L42,74 Z" />
+        android:fillAlpha="0.55"
+        android:pathData="M28,48 Q38,42 48,48 T68,48 T86,48 L86,52 Q76,58 66,52 T46,52 T28,52 Z" />
+
+    <!-- 잠기는 물방울 (심해로 내려가는 모양) -->
     <path
         android:fillColor="#FFFFFFFF"
-        android:pathData="M44,78 L64,78 L62,84 L46,84 Z" />
+        android:pathData="M54,62 L61,74 A9,9 0 1 1 47,74 Z" />
+
+    <!-- 작은 거품 1 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillAlpha="0.7"
+        android:pathData="M42,88 A2.5,2.5 0 1 1 42,88.001 Z" />
+
+    <!-- 작은 거품 2 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillAlpha="0.5"
+        android:pathData="M66,90 A2,2 0 1 1 66,90.001 Z" />
 </vector>
